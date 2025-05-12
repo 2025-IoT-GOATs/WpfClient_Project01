@@ -28,7 +28,9 @@
         </GroupBox>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Background="DarkBlue" Margin="3" >
             <TextBox Text="{Binding UserInput, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="LOGIN" Command="{Binding LoginCommand}"/>
+            <Button Content="연결" Command="{Binding ConnectCommand}" />
+            <Button Content="보내기" Command="{Binding SendCommand}" />
+            <ListBox ItemsSource="{Binding Logs}" Height="200"/>
         </StackPanel>
     </Grid>
 </mah:MetroWindow>
