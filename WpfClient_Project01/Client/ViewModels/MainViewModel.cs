@@ -3,6 +3,7 @@ using Client.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using MahApps.Metro.Controls.Dialogs;
 using MySqlX.XDevAPI;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace Client.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
+        private readonly IDialogCoordinator _idialogcoordinator;
+
         [ObservableProperty]
         private ObservableObject currentViewModel;
 
@@ -27,8 +30,9 @@ namespace Client.ViewModels
         [ObservableProperty]
         private string status;
 
-        public MainViewModel()
+        public MainViewModel(IDialogCoordinator idialogcoordinator)
         {
+            this._idialogcoordinator = idialogcoordinator;
             WeakReferenceMessenger.Default.Register<InitializeMessengerMessage>(this, (r, m) =>
             {
                 RegisterMessengerHandlers();
@@ -52,9 +56,17 @@ namespace Client.ViewModels
         }
 
         [RelayCommand]
-        public async void ExitCommand()
+        public async void Exit()
         {
+            var result = await this._idialogcoordinator.ShowMessageAsync(this, "종료", "종료하시겠습니까?", MessageDialogStyle.AffirmativeAndNegative);
+            if (result == MessageDialogResult.Affirmative)
+            {
+                Application.Current.Shutdown();
+            }
+            else
+            {
 
+            }
         }
 
     }

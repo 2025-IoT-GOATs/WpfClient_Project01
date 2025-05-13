@@ -1,5 +1,6 @@
 ﻿using Client.ViewModels;
 using Client.Views;
+using MahApps.Metro.Controls.Dialogs;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -13,7 +14,9 @@ namespace Client
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            var viewModel = new MainViewModel();
+            var id = DialogCoordinator.Instance;
+
+            var viewModel = new MainViewModel(id);
             var view = new MainView();
             view.DataContext = viewModel;
             view.ShowDialog();
