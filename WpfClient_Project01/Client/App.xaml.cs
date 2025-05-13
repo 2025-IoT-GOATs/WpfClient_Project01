@@ -17,6 +17,7 @@ namespace Client
             var view = new MainView();
             view.DataContext = viewModel;
             view.ShowDialog();
+            Common.LOGGER.Info("[Application_Startup] : Sucess");
         }
     }
 

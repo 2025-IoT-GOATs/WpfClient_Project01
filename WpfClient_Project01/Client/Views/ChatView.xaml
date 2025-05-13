@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="Client.Views.ChatView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Client.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="300" Loaded="OnLoaded">
+    <Grid>
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Background="DarkBlue" Margin="3" >
+            <TextBox 
+                    x:Name="TxtInput" KeyDown="TxtInput_KeyDown" 
+                    Text="{Binding UserInput, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="보내기" Command="{Binding SendCommand}" IsDefault="True" />
+            <ListBox x:Name="LsbChat"
+                     ItemsSource="{Binding Logs, NotifyOnTargetUpdated=True}" 
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                     Height="390"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

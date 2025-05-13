@@ -6,9 +6,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:Client.Views"
         mc:Ignorable="d"
-        Title="OX Clients" Height="450" Width="900">
+        Title="OX Clients" Height="450" Width="900"
+        Dialog:DialogParticipation.Register="{Binding }"
+        >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -20,17 +23,26 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="5,5,0,0">
+            <Menu>
+                <MenuItem Header="환경설정">
+                    <MenuItem Header="종료" Command="{Binding Exit}" />
+                    <MenuItem Header="채팅방 설정" />
+                </MenuItem>
+                <MenuItem Header="도구">
+                   
+                </MenuItem>
+            </Menu>
+        </StackPanel>
         <GroupBox Grid.Row="1" Grid.Column="0" Background="Bisque" Margin="3">
             <TextBox Text="O" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" Width="60" Height="60" TextAlignment="Center" IsReadOnly="True"/>
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="1" Background="IndianRed" Margin="3">
             <TextBox Text="X" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" Width="60" Height="60" TextAlignment="Center" IsReadOnly="True"/>
         </GroupBox>
-        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Background="DarkBlue" Margin="3" >
-            <TextBox Text="{Binding UserInput, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="연결" Command="{Binding ConnectCommand}" />
-            <Button Content="보내기" Command="{Binding SendCommand}" />
-            <ListBox ItemsSource="{Binding Logs}" Height="200"/>
-        </StackPanel>
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent">
+            <StatusBarItem Content="{Binding Status}" Margin="5"/>
+        </StatusBar>
+        <ContentControl Content="{Binding CurrentView}" Margin="3" Grid.RowSpan="2" Grid.Column="2" />
     </Grid>
 </mah:MetroWindow>

@@ -1,53 +1,60 @@
 ﻿using Client.Models;
+using Client.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MySqlX.XDevAPI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Client.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        private readonly SocketClient _client = new();
-        private string _chatName;
+        [ObservableProperty]
+        private ObservableObject currentViewModel;
 
         [ObservableProperty]
-        private string userInput;
+        private UserControl currentView;
 
-        public ObservableCollection<string> Logs { get; } = new();
+        [ObservableProperty]
+        private string status;
 
         public MainViewModel()
         {
-            _client.MessageReceived += OnMessageReceived;
-        }
+            WeakReferenceMessenger.Default.Register<InitializeMessengerMessage>(this, (r, m) =>
+            {
+                RegisterMessengerHandlers();
+            });
 
-        private void OnMessageReceived(string msg)
+            var vm = new LoginViewModel();
+            var view = new LoginView { DataContext = vm };
+            CurrentViewModel = vm;
+            CurrentView = view;
+
+            Status = "Test Version 0.2";
+        }
+        private void RegisterMessengerHandlers()
         {
-            App.Current.Dispatcher.Invoke(() => Logs.Add("[수신] " + msg));
+            WeakReferenceMessenger.Default.Register<ViewTransitionMessage>(this, (r, m) =>
+            {
+                CurrentViewModel = m.ViewModel;
+                CurrentView = m.View;
+                CurrentView.DataContext = m.ViewModel;
+            });
         }
 
         [RelayCommand]
-        public async Task ConnectAsync()
+        public async void ExitCommand()
         {
-            await _client.ConnectAsync("127.0.0.1", 9000);
-            _client.StartReceiveLoop();
-            _chatName = UserInput;
-            await _client.SendAsync("CHAT " + UserInput + " \n");
-            Logs.Add("[시스템] 서버 연결됨");
-        }
 
-        [RelayCommand]
-        public async Task SendAsync()
-        {
-            await _client.SendAsync("CHAT "+_chatName +" "+ UserInput+" \n");
-            Logs.Add("[송신] " + UserInput);
-            UserInput = string.Empty;
         }
 
     }
