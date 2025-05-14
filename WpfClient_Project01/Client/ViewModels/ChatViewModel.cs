@@ -33,6 +33,7 @@ namespace Client.ViewModels
             }
             else
             {
+                msg = msg.Substring(5, msg.Length - 6);
                 App.Current.Dispatcher.Invoke(() => Logs.Add(msg));
                 Common.LOGGER.Info($"[CHAT] {msg}");
             }
