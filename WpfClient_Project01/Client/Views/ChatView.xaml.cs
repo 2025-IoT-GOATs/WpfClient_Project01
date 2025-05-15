@@ -43,7 +43,10 @@ namespace Client.Views
         {
             if (LsbChat.Items.Count > 0)
             {
-                LsbChat.ScrollIntoView(LsbChat.Items[LsbChat.Items.Count - 1]);
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    LsbChat.ScrollIntoView(LsbChat.Items[(LsbChat.Items).Count - 1]);
+                }), System.Windows.Threading.DispatcherPriority.Background);
             }
         }
         private void TxtInput_KeyDown(object sender, KeyEventArgs e)

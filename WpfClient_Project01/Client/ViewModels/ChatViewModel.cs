@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace Client.ViewModels
@@ -17,12 +18,13 @@ namespace Client.ViewModels
     {
         private readonly SocketClient _client = SocketClient.Instance;
         public ObservableCollection<string> Logs { get; } = new();
-
+        public IRelayCommand<KeyEventArgs> SendMoveCommand { get; }
         [ObservableProperty]
         private string userInput;
 
         public ChatViewModel()
         {
+            SendMoveCommand = new RelayCommand<KeyEventArgs>(async (e) => await SendMove(e));
             _client.MessageReceived += OnMessageReceived;
         }
         private void OnMessageReceived(string msg)
@@ -33,16 +35,40 @@ namespace Client.ViewModels
             }
             else
             {
-                msg = msg.Substring(5, msg.Length - 6);
+                msg = msg.Substring(5, msg.Length - 5);
                 App.Current.Dispatcher.Invoke(() => Logs.Add(msg));
                 Common.LOGGER.Info($"[CHAT] {msg}");
             }
         }
-
+        public async Task SendMove(KeyEventArgs KeyInput)
+        {
+            string dir = "";
+            if (KeyInput != null)
+            {
+                switch (KeyInput.Key)
+                {
+                    case Key.Left:
+                        dir = "LEFT";
+                        break;
+                    case Key.Right:
+                        dir = "RIGHT";
+                        break;
+                    case Key.Up:
+                        dir = "UP";
+                        break;
+                    case Key.Down:
+                        dir = "DOWN";
+                        break;
+                    default:
+                        return; // 방향키 아니면 무시
+                }
+            }
+            await _client.SendAsync("MOVE " + dir + "\n");
+        }
         [RelayCommand]
         public async Task SendAsync()
         {
-            await _client.SendAsync("CHAT " + _client.ChatName + " " + UserInput + " \n");
+            await _client.SendAsync("CHAT " + _client.ChatName + " " + UserInput + "\n");
             UserInput = string.Empty;
         }
     }

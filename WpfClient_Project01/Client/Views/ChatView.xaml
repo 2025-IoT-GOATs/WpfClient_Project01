@@ -3,14 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Client.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="300" Loaded="OnLoaded">
+             d:DesignHeight="450" d:DesignWidth="300">
     <Grid>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Background="DarkBlue" Margin="3" >
-            <TextBox 
-                    x:Name="TxtInput" KeyDown="TxtInput_KeyDown" 
-                    Text="{Binding UserInput, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox x:Name="TxtInput"
+                     Grid.Column="0" Margin="5,5" FontSize="14" 
+                     InputMethod.PreferredImeState="On"
+                     InputMethod.PreferredImeConversionMode="Native"
+                     InputMethod.PreferredImeSentenceMode="PhrasePrediction"
+                     mah:TextBoxHelper.Watermark="보낼 메세지 입력.." 
+                     mah:TextBoxHelper.AutoWatermark="True" 
+                     mah:TextBoxHelper.UseFloatingWatermark="True"
+                     mah:TextBoxHelper.ClearTextButton="True"
+                     Text="{Binding UserInput, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="KeyDown">
+                        <i:InvokeCommandAction Command="{Binding SendMoveCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SendCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
             <Button Content="보내기" Command="{Binding SendCommand}" IsDefault="True" />
             <ListBox x:Name="LsbChat"
                      ItemsSource="{Binding Logs, NotifyOnTargetUpdated=True}" 

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Client.Models
 {
-    public sealed class SocketClient : ObservableObject
+    public partial class SocketClient : ObservableObject
     {
         private static readonly Lazy<SocketClient> _instance = new(() => new SocketClient());
         public static SocketClient Instance => _instance.Value;
-
+        [ObservableProperty] private Queue<string> _msgQ;
         private TcpClient _client;
         private NetworkStream _stream;
         private string _chatName;
@@ -35,6 +35,7 @@ namespace Client.Models
         {
             Task.Run(async () =>
             {
+                MsgQ = new Queue<string>();
                 var buffer = new byte[1024];
                 while (true)
                 {
@@ -44,7 +45,30 @@ namespace Client.Models
                         if (len == 0) break; // 연결 종료
 
                         string msg = Encoding.UTF8.GetString(buffer, 0, len);
-                        MessageReceived?.Invoke(msg);
+                        if (msg != string.Empty || msg != null)
+                        {
+                            MsgQ.Enqueue(msg);
+                        }
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+            });
+
+            Task.Run(() =>
+            {
+                MsgQ = new Queue<string>();
+                while (true)
+                {
+                    try
+                    {
+                        if (MsgQ.Count != 0)
+                        {
+                            string msg = MsgQ.Dequeue();
+                            MessageReceived?.Invoke(msg);
+                        }
                     }
                     catch
                     {
